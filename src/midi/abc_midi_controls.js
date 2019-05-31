@@ -414,7 +414,7 @@ var midi = {};
 		}
 	}
 
-	function onStart(target) {
+	function onStart(target, cb) {
 		var parent = closest(target, "abcjs-inline-midi");
 		// If this midi is already playing,
 		if (hasClass(target, 'abcjs-pushed')) {
@@ -422,7 +422,9 @@ var midi = {};
 			pauseCurrentlyPlayingTune();
 			// Change the element so that the start icon is shown.
 			removeClass(target, "abcjs-pushed");
-			return;
+			if(cb) {
+				cb(false)
+			}
 		} else { // Else,
 			// If some other midi is running, turn it off.
 
@@ -430,10 +432,16 @@ var midi = {};
 			if (hasClass(parent, "abcjs-midi-current"))
 			// Start this tune playing from wherever it had stopped.
 				startCurrentlySelectedTune();
+				if(cb) {
+					cb(true);
+				}
 			else {
 				deselectMidiControl();
 				onLoadMidi(target, parent, function() {
 					startCurrentlySelectedTune();
+					if(cb) {
+						cb(true);
+					}
 				});
 			}
 			addClass(target, "abcjs-pushed");
@@ -464,12 +472,12 @@ var midi = {};
 		setMidiCallback(midiJsListener);
 	}
 
-	midi.startPlaying = function(target) {
+	midi.startPlaying = function(target, cb) {
 		// This can be called with the target being entire control, and if so, first find the start button.
 		var btn = target;
 		if (hasClass(target, "abcjs-inline-midi"))
 			btn = target.querySelector('.abcjs-midi-start');
-		onStart(btn);
+		onStart(btn, cb);
 	};
 
 	midi.stopPlaying = function() {
@@ -619,7 +627,7 @@ var midi = {};
 				var target = event.target || event.srcElement;
 				while (target && target !== document.body) {
 					if (hasClass(target, 'abcjs-midi-start')) {
-						onStart(target, event);
+						onStart(target);
 						return;
 					} else if (hasClass(target, 'abcjs-midi-selection')) {
 						onSelection(target, event);
