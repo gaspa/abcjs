@@ -429,13 +429,13 @@ var midi = {};
 			// If some other midi is running, turn it off.
 
 			// If this is the current midi, just continue.
-			if (hasClass(parent, "abcjs-midi-current"))
-			// Start this tune playing from wherever it had stopped.
+			if (hasClass(parent, "abcjs-midi-current")) {
+				// Start this tune playing from wherever it had stopped.
 				startCurrentlySelectedTune();
-				if(cb) {
+				if (cb) {
 					cb(true);
 				}
-			else {
+			} else {
 				deselectMidiControl();
 				onLoadMidi(target, parent, function() {
 					startCurrentlySelectedTune();
