@@ -21,19 +21,17 @@ var TimingCallbacks = function(target, params) {
 		if (self.lineEndCallback) {
 			self.lineEndTimings = getLineEndTimings(newTarget.noteTimings, self.lineEndAnticipation);
 		}
-		self.noteTimings = newTarget.noteTimings;
+		// noteTimings contains an array of events sorted by time. Events that happen at the same time are in the same element of the array.
+		self.noteTimings = target.noteTimings;
+		self.millisecondsPerBeat = 1000 / (self.qpm / 60) / self.beatSubdivisions;
+		self.lastMoment = self.noteTimings[self.noteTimings.length-1].milliseconds;
+		self.totalBeats = Math.round(self.lastMoment / self.millisecondsPerBeat);
 	};
 
 	self.replaceTarget(target);
 	if (self.noteTimings.length === 0)
 		return;
-
-	// noteTimings contains an array of events sorted by time. Events that happen at the same time are in the same element of the array.
-	self.noteTimings = target.noteTimings;
-	self.millisecondsPerBeat = 1000 / (self.qpm / 60) / self.beatSubdivisions;
-	self.lastMoment = self.noteTimings[self.noteTimings.length-1].milliseconds;
-	self.totalBeats = Math.round(self.lastMoment / self.millisecondsPerBeat);
-
+	
 	self.startTime = null;
 	self.currentBeat = 0;
 	self.currentEvent = 0;
